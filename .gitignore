@@ -1,0 +1,13 @@
+.env
+
+node_modules
+/node_modules
+
+process.txt
+dbprisma.txt
+
+/src/generated/prisma
+
+/generated/prisma
+/generated
+./generated
