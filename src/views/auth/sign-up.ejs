@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrarse</title>
+</head>
+<body>
+  <h1>Crear cuenta</h1>
+
+  <!-- Muestra un mensaje de error si el controlador lo pasa -->
+  <% if (locals.error) { %>
+    <p style="color: red;"><%= error %></p>
+  <% } %>
+
+  <form action="/sign-up" method="POST">
+    <div>
+      <label for="username">User:</label>
+      <input type="text" id="username" name="username" required>
+    </div>
+
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+    </div>
+
+    <button type="submit">Register</button>
+  </form>
+
+  <p>¿Already have an account? <a href="/log-in">Log in</a></p>
+</body>
+</html>

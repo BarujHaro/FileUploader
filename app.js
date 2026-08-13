@@ -5,6 +5,8 @@ require('dotenv').config();
 const session = require("./src/config/session");
 const passport = require("./src/config/passport");
 
+import authRoutes from './routes/authRoutes.js';
+
 
 //const messagesRouter = require("./src/routes/messageRoutes");
 //const usersRouter = require("./src/routes/userRoutes");
@@ -31,6 +33,7 @@ app.use((req, res, next) => {
 //app.use('/', messagesRouter);
 //app.use('/user', usersRouter);
 
+app.use('/user', authRoutes);
 
 // 404 ERROR
 app.use((req, res) => {

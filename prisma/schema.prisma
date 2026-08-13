@@ -1,7 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
 
 //npx prisma migrate dev --name init
 
@@ -11,14 +7,13 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 
 // El bloque "datasource" define la conexión real a tu base de datos física
 datasource db {
   provider = "postgresql"   // Indica que estás usando PostgreSQL
- // url      = env("DATABASE_URL")          // Lee la credencial de conexión desde un archivo .env
+  url      = env("DATABASE_URL")          // Lee la credencial de conexión desde un archivo .env
 }
 
 
@@ -40,16 +35,19 @@ model Folder {
   createdAt DateTime @default(now())
   
   // Relación con Usuario
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 
   // Sistema de carpetas anidadas 
-  parent    Folder?  @relation("Subfolders", fields: [parentId], references: [id])
+  parent    Folder?  @relation("Subfolders", fields: [parentId], references: [id], onDelete: Cascade)
   parentId  Int?
   children  Folder[] @relation("Subfolders")
 
   // Archivos dentro de la carpeta
   files     File[]
+
+  shareLink      String?   @unique // UUID que irá en la URL compartida
+  shareExpiresAt DateTime? // Fecha y hora límite en la que el enlace dejará de funcionar
 }
 
 model File {
@@ -57,12 +55,13 @@ model File {
   name      String
   url       String   // URL de  del algun lugar donde se guarden
   size      Int      // Tamaño en bytes
+  mimeType  String   // ej. "application/pdf" o "image/png"
   createdAt DateTime @default(now())
 
   folder    Folder   @relation(fields: [folderId], references: [id])
   folderId  Int
 
-  user      User     @relation(fields: [userId], references: [id])
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
 
