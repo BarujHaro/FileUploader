@@ -6,26 +6,15 @@
     <title><%= title %></title>
     <link rel="stylesheet" href="/css/styles.css">
 </head>
-<body>
+<body> 
 <%- include('partials/header') %>
 <main class="container auth-form">
-    <h1>Sign up</h1>
+    <h1>Login</h1>
     <% if (error) { %>
         <p class="error"><%= error %></p>
-    <% } %> 
+    <% } %>
 
-    <form action="/auth/sign-up" method="POST" class="forms">
-        <div class="label-control">
-            <label>First name</label>
-            <input type="text" name="first_name" required>
-        </div>
-
-                <div class="label-control">
-            <label>Last name</label>
-            <input type="text" name="last_name" required>
-        </div>
-
-
+    <form action="/auth/login" method="POST" class="forms">
         <div class="label-control">
             <label>Email</label>
             <input type="email" name="email" required>
@@ -36,12 +25,7 @@
             <input type="password" name="pass" required>
         </div>
 
-        <div class="label-control">
-            <label>Confirm Password</label>
-            <input type="password" name="confirmPassword" required>
-        </div>
-
-        <button type="submit">Create account</button>
+        <button type="submit">Login</button>
     </form>
 
 </main>  

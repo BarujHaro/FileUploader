@@ -23,7 +23,9 @@ datasource db {
 
 model User {
   id       Int      @id @default(autoincrement())     // Clave primaria, número entero que aumenta solo
-  username String   @unique                           // Nombre de usuario
+  email String   @unique                           // Nombre de usuario
+  first_name String   
+  last_name String   
   password String
   folders  Folder[]                                   //Relacionaes dice a prisma que el usuario puede tener una lista de carpetas y archivos
   files    File[]
