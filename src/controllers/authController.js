@@ -21,7 +21,7 @@ exports.loginGet = async (req, res) => {
 };
 
 export const loginPost = (req, res, next) => {
-    // 1. Validaciones previas de formularios
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.render("login", {
@@ -30,11 +30,11 @@ export const loginPost = (req, res, next) => {
         });
     }
 
-    // 2. Autenticación delegada a Passport
+     
     passport.authenticate("local", (err, user, info) => {
         if (err) return next(err);
 
-        // Si las credenciales fallan
+   
         if (!user) {
             return res.render("login", {
                 title: "Login",
@@ -42,7 +42,7 @@ export const loginPost = (req, res, next) => {
             });
         }
 
-        // Si las credenciales son válidas, inicia la sesión
+        
         req.login(user, (loginErr) => {
             if (loginErr) return next(loginErr);
             return res.redirect("/");
@@ -71,7 +71,7 @@ export const getSignUp = (req, res) => {
 export const postSignUp = async (req,res,next) => {
 
     try{
-        // 1. Validar errores de express-validator
+        
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("sign-up", {
@@ -97,8 +97,8 @@ export const postSignUp = async (req,res,next) => {
         await prisma.user.create({
             data: {
                 email: email,
-                first_name: first_name, // Si usaste @map en tu schema, o usa firstName tal cual lo definiste
-                last_name: last_name,   // Si usaste @map en tu schema, o usa lastName tal cual lo definiste
+                first_name: first_name,  
+                last_name: last_name,    
                 password: hashedPassword,
             },
         });

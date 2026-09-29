@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('../partials/header') %>
+    <main class="container dashboard">
+        <header class="dashboard-header">
+            <div class="breadcrumb">
+                <h2>
+                    <a href="/folders">Root</a>
+                    <% if (typeof currentFolder !== 'undefined' && currentFolder) { %>
+                        / <span><%= currentFolder.name %></span>
+                    <% } %>
+                </h2>
+            </div>
+            <div class="actions">
+                <button class="btn btn-primary" onclick="openModal('folderModal')">New folder</button>
+                <button class="btn btn-secondary" onclick="openModal('uploadModal')">Upload file</button>
+            </div>
+        </header>
+
+        <!--Folders section-->
+        <section class="content-section">
+            <h3>Folders</h3>
+            <div class="grid-container">
+                <% if (typeof folders !== 'undefined' && folders.length > 0) { %>
+                    <% folders.forEach(folder => { %>
+                        <div class="card folder-card">
+                            <a href="/folders/<%= folder.id %>" class="folder-link">
+                                <span class="icon">📁</span>
+                                <span class="name"><%= folder.name %></span>
+                                <button class="btn-icon" onclick="openEditModal('/folders/<%= folder.id %>/edit', '<%= folder.name %>')">✏️</button>
+                            </a>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="empty-msg">There aren't any folders.</p>
+                <% } %>
+            </div>
+        </section>
+
+        <!--Files section-->
+        <section class="content-section">
+            <h3>Files</h3>
+            <div class="grid-container">
+                <% if (typeof files !== 'undefined' && files.length > 0) { %>
+                    <% files.forEach(file => { %>
+                        <div class="card file-card">
+                            <div class="file-icon">📄</div>
+                            <div class="file-info">
+                                <span class="name" title="<%= file.name %>"<%= file.name %></span>
+                                <small class="size"><%= file.size %></small>
+                            </div>
+                            <div class="file-actions">
+                                <a href="/files/<%= file.id %>/download" class="btn-icon" title="Download">⬇</a>
+                                <button class="btn-icon" onclick="openEditModal('/files/<%= file.id %>/edit', '<%= file.name %>')">✏️</button>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="empty-msg">There aren't any files.</p>
+                <% } %>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!--Modal 1: Create new folder-->
+    <div id="folderModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Create New Folder</h3>
+            <form action="/folders" method="POST">
+                <input type="hidden" name="parentId" value="<%= typeof currentFolder !== 'undefined' && currentFolder ? currentFolder.id : '' %>">
+
+                <div class="form-group">
+                    <label for="folderName">Name of the Folder</label>
+                    <input type="text" id="folderName" name="name" required placeholder="Ej. Doc, photo...">      
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal('folderModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--Modal 2: upload file-->
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Upload Files</h3>
+            <form action="/files/upload" method="POST" enctype="multipart/form-data">
+                <!--Select folder-->
+                    <div class="form-group">
+                        <label for="folderSelect">Save folder:</label>
+                        <select id="folderSelect" name="folderId">
+                            <option value="">Root</option>
+                                <% if (typeof allFolders !== 'undefined') { %>
+                                    <% allFolders.forEach(folder => { %>
+                                        <option value="<%= folder.id %>" <%= (typeof currentFolder !== 'undefined' && currentFolder && currentFolder.id === folder.id) ? 'selected' : '' %>>
+                                            📁 <%= folder.name %>
+                                        </option>
+                                    <% }) %>
+                                <% } %>
+                        </select>
+                    </div>
+
+                <!--Select file-->
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal('uploadModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Upload</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal to edit -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Edit</h3>
+            <form id="editForm" method="POST">
+                <div class="form-group">
+                    <label for="editName">New name:</label>
+                    <input type="text" id="editName" name="name" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!--Scripts-->
+    <script>
+        function openModal(modalId){
+            document.getElementById(modalId).classList.add('active');
+        }
+        function closeModal(modalId){
+            document.getElementById(modalId).classList.remove('active');
+        }
+        function openEditModal(actionUrl, currentName) {
+            const form = document.getElementById('editForm');
+            const input = document.getElementById('editName');
+            
+            form.action = actionUrl; // Configura la ruta según sea carpeta o archivo
+            input.value = currentName;
+            
+            openModal('editModal');
+        }
+        window.onclick=function(event){
+            if(event.targetr.classList.contains('modal-overlay')){
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

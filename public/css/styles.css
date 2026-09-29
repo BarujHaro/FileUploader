@@ -1,0 +1,29 @@
+:root{
+    --bg: #f8f7f2;
+    --light: #ece9e1;
+    --dark: #aca6a1;
+    --darker: #5b402f;
+    --text: #322924;
+
+    --color1: #dbd3c4;
+    --color2: #dbd3e0;
+    --color3: #a9cdcd;
+    --color4: #adb3d6;
+
+    --danger: #8b0000;
+    --danger-lighter: #f8d7da;
+    --danger-light: #e5a5ab;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+    background-color: var(--bg);
+    margin: 0;
+    padding: 0;
+    font-family: "Book Antiqua", Palatino, "Palatino Linotype", "Palatino LT STD", Georgia, serif;
+}

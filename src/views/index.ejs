@@ -1,0 +1,45 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include('partials/header') %>
+    <main class="container">
+        <section class="welcome-card">
+            <div class="message-content">
+                <h1>Secure cloud storage</h1>
+                <p>Upload, organize and access your files fron anywhere</p>
+            </div>
+
+            <div class="action-container">
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <!-- 1: Authenticated User -->
+                    <div class="user-dashboard-preview">
+                        <h3>¡Hello, <%= user.name || 'Usuario' %>!</h3>
+                        <p> Access your files and folder or upload new files.</p>
+                        <a href="/folders" class="btn btn-primary">Go to files</a>
+                    </div>
+                <% } else { %>
+                    <!-- 2: Not Authenticated User -->
+                    <div class="auth-prompt">
+                        <h3>Start now</h3>
+                        <p>Log in or create an account to save your files.</p>
+                        <div class="auth-buttons">
+                            <a href="/auth/login" class="btn btn-primary">Log in</a>
+                            <a href="/auth/sign-up" class="btn btn-secondary">Register</a>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+        </section>
+
+
+
+    </main>
+</body>
+</html>

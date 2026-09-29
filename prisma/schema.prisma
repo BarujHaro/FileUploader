@@ -32,38 +32,39 @@ model User {
 }
 
 model Folder {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now())
-  
+  id             Int       @id @default(autoincrement())
+  name           String
+  createdAt      DateTime  @default(now())
+
   // Relación con Usuario
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         Int
 
   // Sistema de carpetas anidadas 
-  parent    Folder?  @relation("Subfolders", fields: [parentId], references: [id], onDelete: Cascade)
-  parentId  Int?
-  children  Folder[] @relation("Subfolders")
+  parent         Folder?   @relation("Subfolders", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId       Int?
+  children       Folder[]  @relation("Subfolders")
 
   // Archivos dentro de la carpeta
-  files     File[]
+  files          File[]
 
-  shareLink      String?   @unique // UUID que irá en la URL compartida
-  shareExpiresAt DateTime? // Fecha y hora límite en la que el enlace dejará de funcionar
+  shareLink      String?   @unique
+  shareExpiresAt DateTime?
 }
 
 model File {
   id        Int      @id @default(autoincrement())
   name      String
-  url       String   // URL de  del algun lugar donde se guarden
-  size      Int      // Tamaño en bytes
-  mimeType  String   // ej. "application/pdf" o "image/png"
+  url       String
+  size      Int
+  mimeType  String
   createdAt DateTime @default(now())
 
-  folder    Folder   @relation(fields: [folderId], references: [id])
-  folderId  Int
+  // Opcional para permitir archivos en la raíz (folderId = null)
+  folder    Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
+  folderId  Int?
 
-  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
 }
 
