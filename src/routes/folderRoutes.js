@@ -1,5 +1,5 @@
 import { Router } from 'express';
-const folderController = require("../controllers/folderController");
+import * as folderController from "../controllers/folderController.js";
 const router = Router();
 
 router.get('/folders', folderController.getFolders);

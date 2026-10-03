@@ -1,7 +1,6 @@
-import prisma from '../db.js';
+import prisma from '../db/db.js';
 
-
-exports.getFolders = async (req, res) => {
+export const getFolders = async (req, res) => {
     try{
      
         res.render("dashboard", {
@@ -26,7 +25,7 @@ exports.getFolders = async (req, res) => {
 
 };
 
-exports.postFolders = async (req, res) => {
+export const postFolders = async (req, res) => {
     try{
         const {name, parentId} = req.body;
         const userId = req.user.id;
@@ -47,7 +46,7 @@ exports.postFolders = async (req, res) => {
 };
 
 
-exports.getFolderContent = async (req, res) => {
+export const getFolderContent = async (req, res) => {
     try {
         const folderId = parseInt(req.params.id);
         const userId = req.user.id;
@@ -89,7 +88,7 @@ exports.getFolderContent = async (req, res) => {
     }
 };
 
-exports.editFolder = async (req, res) => {
+export const editFolder = async (req, res) => {
     try {
         const folderId = parseInt(req.params.id);
         const { name } = req.body;
@@ -108,7 +107,7 @@ exports.editFolder = async (req, res) => {
     }
 };
 
-exports.deleteFolder = async (req, res) => {
+export const deleteFolder = async (req, res) => {
     try {
         const folderId = parseInt(req.params.id);
         const userId = req.user.id;

@@ -1,9 +1,9 @@
-const express = require("express"); 
-const app = express();    
-const path = require("node:path");  
-require('dotenv').config();
-const session = require("./src/config/session");
-const passport = require("./src/config/passport");
+import express from "express"; 
+import path from "node:path";  
+import { fileURLToPath } from 'node:url';  
+import 'dotenv/config';  
+import session from "./src/config/session.js";
+import passport from "./src/config/passport.js";
 
 import authRoutes from './src/routes/authRoutes.js';
 import fileRoutes from './src/routes/fileRoutes.js';
@@ -11,6 +11,13 @@ import folderRoutes from './src/routes/folderRoutes.js';
 
 //const messagesRouter = require("./src/routes/messageRoutes");
 //const usersRouter = require("./src/routes/userRoutes");
+
+const app = express();    
+
+// Config of simulated __dirname in moduleES
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 //app.use(session({ secret: process.env.SESSION_KEY, resave: false, saveUninitialized: false }));
 app.use(session);
@@ -30,10 +37,22 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
+    try{
+    
+        res.render("index", {
+            title: "File uploader",
+            error: null
+        });
 
-app.use('/user', authRoutes);
+    }catch(error){
+        res.status(500).render("index", {
+            title: "File uploader",
+            error: "Error in the server"
+        });
+    }
+}); 
+
+app.use('/auth', authRoutes);
 app.use('/file', fileRoutes);
 app.use('/folder', folderRoutes);
 

@@ -8,6 +8,13 @@
 </head>
 <body>
     <%- include('partials/header') %>
+
+            <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger" style="color: red; background-color: #f8d7da; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                <%= error %>
+            </div>
+        <% } %>
+
     <main class="container">
         <section class="welcome-card">
             <div class="message-content">

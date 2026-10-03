@@ -1,6 +1,7 @@
 {
   "name": "fileuploader",
   "version": "1.0.0",
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -14,8 +15,11 @@
     "@quixo3/prisma-session-store": "^3.1.19",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
     "express-session": "^1.19.0",
+    "express-validator": "^7.3.2",
     "multer": "^2.4.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",

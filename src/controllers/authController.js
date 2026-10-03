@@ -1,18 +1,18 @@
 import bcrypt from 'bcrypt';
-import prisma from '../db.js';
+import prisma from '../db/db.js';
 import passport from "../config/passport.js";
 import { validationResult } from "express-validator";
 
-exports.loginGet = async (req, res) => {
+export const loginGet = async (req, res) => {
     try{
     
-        res.render("login", {
+        res.render("auth/login", {
             title: "Login",
             error: null
         });
 
     }catch(error){
-        res.status(500).render("login", {
+        res.status(500).render("auth/login", {
             title: "Login",
             error: "Error: loading form"
         });
@@ -24,7 +24,7 @@ export const loginPost = (req, res, next) => {
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.render("login", {
+        return res.render("auth/login", {
             title: "Login",
             error: errors.array()[0].msg 
         });
@@ -36,7 +36,7 @@ export const loginPost = (req, res, next) => {
 
    
         if (!user) {
-            return res.render("login", {
+            return res.render("auth/login", {
                 title: "Login",
                 error: info?.message || "Invalid email or password"
             });
@@ -51,16 +51,16 @@ export const loginPost = (req, res, next) => {
 };
 
 
-
+ 
 
 export const getSignUp = (req, res) => {
     try{
-        res.render("sign-up", {
+        res.render("auth/sign-up", {
             title: "Sign-up",
             error: null
         });
     }catch(error){
-        res.status(500).render("sign-up", {
+        res.status(500).render("auth/sign-up", {
             title: "Sign-up",
             error: "Error: loading form"
         });
@@ -74,7 +74,7 @@ export const postSignUp = async (req,res,next) => {
         
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.render("sign-up", {
+            return res.render("auth/sign-up", {
                 title: "Sign up",
                 error: errors.array()[0].msg 
             });
@@ -87,7 +87,7 @@ export const postSignUp = async (req,res,next) => {
         });
 
         if (existingUser){
-            return res.render('sign-up', {
+            return res.render('auth/sign-up', {
                 error: 'User is not available'
             });
         }
@@ -103,10 +103,10 @@ export const postSignUp = async (req,res,next) => {
             },
         });
 
-        res.redirect('/log-in');
+        res.redirect('auth/login');
     }catch(error){
         console.error("SIGNUP ERROR:", error);
-        res.status(500).render("sign-up", {
+        res.status(500).render("auth/sign-up", {
             title: "Sign-up",
             error: "Error: Sign up failed"
         });
@@ -114,7 +114,7 @@ export const postSignUp = async (req,res,next) => {
 };
 
 
-exports.logout = (req, res, next) => {
+export const logout = (req, res, next) => {
   req.logout(err => {
     if (err) {
       return next(err);

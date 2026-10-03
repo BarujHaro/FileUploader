@@ -1,6 +1,6 @@
-const { body } = require("express-validator");
+import { body } from "express-validator";
 
-const validateUser = [
+export const validateUser = [
   body("first_name")
     .trim()
     .notEmpty().withMessage("First name is required")
@@ -38,5 +38,3 @@ const validateUser = [
       return true;
     })
 ];
-
-module.exports = validateUser;

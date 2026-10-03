@@ -1,6 +1,6 @@
-import prisma from '../db.js';
+import prisma from '../db/db.js';
 
-exports.uploadFile = async (req, res) => {
+export const uploadFile = async (req, res) => {
     try{
         if(!req.file){
             return res.status(400).send("Not file upload");
@@ -27,7 +27,7 @@ exports.uploadFile = async (req, res) => {
     }
 };
 
-exports.downloadFile = async (req, res) => {
+export const downloadFile = async (req, res) => {
     try {
         const fileId = parseInt(req.params.id);
         const userId = req.user.id;
@@ -61,7 +61,7 @@ exports.downloadFile = async (req, res) => {
 };
 
 
-exports.editFile = async (req, res) => {
+export const editFile = async (req, res) => {
     try {
         const fileId = parseInt(req.params.id);
         const { name } = req.body;
@@ -81,7 +81,7 @@ exports.editFile = async (req, res) => {
 };
 
 
-exports.deleteFile = async (req, res) => {
+export const deleteFile = async (req, res) => {
     try {
         const fileId = parseInt(req.params.id);
         const userId = req.user.id;

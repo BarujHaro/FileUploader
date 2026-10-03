@@ -1,6 +1,6 @@
 import { Router } from 'express';
-const fileController = require("../controllers/fileController");
-const upload = require('../config/multer');
+import * as fileController from "../controllers/fileController.js";
+import {upload} from '../config/multer.js';
 const router = Router();
 
 router.post('/file/upload', upload.single('file'), fileController.uploadFile);

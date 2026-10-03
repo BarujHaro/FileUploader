@@ -1,15 +1,15 @@
 // passport the security guard that looks for the identification
 //https://www.passportjs.org/packages/
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const bcrypt = require("bcrypt");
-const { PrismaClient } = require("@prisma/client");
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import bcrypt from "bcrypt";
+import { PrismaClient } from "@prisma/client";
 //const User = require("../models/users");
 
 const prisma = new PrismaClient();
 
 
-//Define the local authentication strategy (email+password) 
+//Defines the strategy of authentication (email+password) 
 passport.use(
   new LocalStrategy(
     { usernameField: "email" }, //The username is the "email" field
@@ -40,4 +40,4 @@ passport.deserializeUser(async (id, done) => {
   done(null, user);
 });
 
-module.exports = passport;
+export default passport;
