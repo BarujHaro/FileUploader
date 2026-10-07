@@ -21,33 +21,41 @@ export const loginGet = async (req, res) => {
 };
 
 export const loginPost = (req, res, next) => {
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.render("auth/login", {
-            title: "Login",
-            error: errors.array()[0].msg 
-        });
-    }
-
-     
-    passport.authenticate("local", (err, user, info) => {
-        if (err) return next(err);
-
-   
-        if (!user) {
+    try{
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
             return res.render("auth/login", {
                 title: "Login",
-                error: info?.message || "Invalid email or password"
+                error: errors.array()[0].msg 
             });
         }
 
         
-        req.login(user, (loginErr) => {
-            if (loginErr) return next(loginErr);
-            return res.redirect("/");
+        passport.authenticate("local", (err, user, info) => {
+            if (err) return next(err);
+
+    
+            if (!user) {
+                return res.render("auth/login", {
+                    title: "Login",
+                    error: info?.message || "Invalid email or password"
+                });
+            }
+
+            
+            req.login(user, (loginErr) => {
+                if (loginErr) return next(loginErr);
+                return res.redirect("/");
+            });
+        })(req, res, next);
+    }catch(error){
+        res.status(500).render("auth/login", {
+            title: "Login",
+            error: "Error: error on the server"
         });
-    })(req, res, next);
+    }
+    
+
 };
 
 
@@ -71,7 +79,7 @@ export const getSignUp = (req, res) => {
 export const postSignUp = async (req,res,next) => {
 
     try{
-        
+       
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render("auth/sign-up", {
@@ -88,6 +96,7 @@ export const postSignUp = async (req,res,next) => {
 
         if (existingUser){
             return res.render('auth/sign-up', {
+                title: "Sign-up",
                 error: 'User is not available'
             });
         }
@@ -103,7 +112,8 @@ export const postSignUp = async (req,res,next) => {
             },
         });
 
-        res.redirect('auth/login');
+        res.redirect("/auth/login"); 
+
     }catch(error){
         console.error("SIGNUP ERROR:", error);
         res.status(500).render("auth/sign-up", {

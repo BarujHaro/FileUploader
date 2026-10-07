@@ -12,8 +12,8 @@
         <header class="dashboard-header">
             <div class="breadcrumb">
                 <h2>
-                    <a href="/folders">Root</a>
-                    <% if (typeof currentFolder !== 'undefined' && currentFolder) { %>
+                    <a href="/folder/folders">Root</a>
+                    <% if (typeof currentFolder !== 'undefined' && currentFolder !== 'null' && currentFolder) { %>
                         / <span><%= currentFolder.name %></span>
                     <% } %>
                 </h2>
@@ -28,18 +28,26 @@
         <section class="content-section">
             <h3>Folders</h3>
             <div class="grid-container">
-                <% if (typeof folders !== 'undefined' && folders.length > 0) { %>
+                <% if (Boolean(folders) && folders.length > 0) { %>
                     <% folders.forEach(folder => { %>
                         <div class="card folder-card">
-                            <a href="/folders/<%= folder.id %>" class="folder-link">
+                            <a href="/folder/folders/<%= folder.id %>" class="folder-link">
                                 <span class="icon">📁</span>
                                 <span class="name"><%= folder.name %></span>
-                                <button class="btn-icon" onclick="openEditModal('/folders/<%= folder.id %>/edit', '<%= folder.name %>')">✏️</button>
-                            </a>
+                                
+                            <div class="card-actions">
+                                <!-- Botón Editar -->
+                                <button type="button" class="btn-icon" title="Edit" onclick="openEditModal('/folder/folders/<%= folder.id %>/edit', '<%= folder.name %>')">✏️</button>
+                                
+                                <!-- Formulario Eliminar -->
+                                <form action="/folder/folders/<%= folder.id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this folder?');">
+                                    <button type="submit" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                                </form>
+                            </div>
                         </div>
                     <% }) %>
                 <% } else { %>
-                    <p class="empty-msg">There aren't any folders.</p>
+                    <p class="empty-msg">No folders found.</p>
                 <% } %>
             </div>
         </section>
@@ -48,22 +56,31 @@
         <section class="content-section">
             <h3>Files</h3>
             <div class="grid-container">
-                <% if (typeof files !== 'undefined' && files.length > 0) { %>
+                <% if (Boolean(files) && files.length > 0) { %>
                     <% files.forEach(file => { %>
                         <div class="card file-card">
                             <div class="file-icon">📄</div>
                             <div class="file-info">
                                 <span class="name" title="<%= file.name %>"<%= file.name %></span>
-                                <small class="size"><%= file.size %></small>
+                                <small class="size"><%= (file.size / 1024).toFixed(1) %> KB</small>
+                            </div>
                             </div>
                             <div class="file-actions">
-                                <a href="/files/<%= file.id %>/download" class="btn-icon" title="Download">⬇</a>
-                                <button class="btn-icon" onclick="openEditModal('/files/<%= file.id %>/edit', '<%= file.name %>')">✏️</button>
+                                <!-- 1. DESCARGAR: Enlace directo a la ruta de descarga -->
+                                <a href="/file/files/<%= file.id %>/download" class="btn-icon" title="Download" download>⬇</a>
+
+                                <!-- 2. EDITAR: Abre el modal y pasa la URL y nombre actual -->
+                                <button type="button" class="btn-icon" title="Edit" onclick="openEditModal('/file/files/<%= file.id %>/edit', '<%= file.name %>')">✏️</button>
+
+                                <!-- 3. ELIMINAR: Formulario POST con confirmación -->
+                                <form action="/file/files/<%= file.id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this file?');">
+                                    <button type="submit" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                                </form>
                             </div>
                         </div>
                     <% }) %>
                 <% } else { %>
-                    <p class="empty-msg">There aren't any files.</p>
+                    <p class="empty-msg">No files found.</p>
                 <% } %>
             </div>
         </section>
@@ -75,7 +92,7 @@
     <div id="folderModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Create New Folder</h3>
-            <form action="/folders" method="POST">
+            <form action="/folder/folders" method="POST">
                 <input type="hidden" name="parentId" value="<%= typeof currentFolder !== 'undefined' && currentFolder ? currentFolder.id : '' %>">
 
                 <div class="form-group">
@@ -95,13 +112,17 @@
     <div id="uploadModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Upload Files</h3>
-            <form action="/files/upload" method="POST" enctype="multipart/form-data">
+            <form action="/file/files/upload" method="POST" enctype="multipart/form-data">
+                
+                <!-- Guardar dentro de la carpeta actual si estamos dentro de una -->
+                <input type="hidden" name="folderId" value="<%= typeof currentFolder !== 'undefined' && currentFolder ? currentFolder.id : '' %>">
+
                 <!--Select folder-->
                     <div class="form-group">
-                        <label for="folderSelect">Save folder:</label>
+                        <label for="folderSelect">Destination folder:</label>
                         <select id="folderSelect" name="folderId">
                             <option value="">Root</option>
-                                <% if (typeof allFolders !== 'undefined') { %>
+                                <% if (typeof allFolders !== 'undefined' && allFolders) { %>
                                     <% allFolders.forEach(folder => { %>
                                         <option value="<%= folder.id %>" <%= (typeof currentFolder !== 'undefined' && currentFolder && currentFolder.id === folder.id) ? 'selected' : '' %>>
                                             📁 <%= folder.name %>
@@ -110,6 +131,11 @@
                                 <% } %>
                         </select>
                     </div>
+
+                <div class="form-group">
+                    <label for="fileInput">Select file:</label>
+                    <input type="file" id="fileInput" name="file" required>
+                </div>
 
                 <!--Select file-->
                 <div class="modal-actions">
@@ -152,7 +178,7 @@
             form.action = actionUrl; // Configura la ruta según sea carpeta o archivo
             input.value = currentName;
             
-            openModal('editModal');
+            document.getElementById('editModal').classList.add('active');
         }
         window.onclick=function(event){
             if(event.targetr.classList.contains('modal-overlay')){

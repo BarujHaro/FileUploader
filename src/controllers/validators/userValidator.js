@@ -21,7 +21,7 @@ export const validateUser = [
     .isEmail().withMessage("Must be a valid email address")
     .normalizeEmail(),
 
-  body("pass")
+  body("password")
     .notEmpty().withMessage("Password is required")
     .isLength({ min: 8 }).withMessage("Password must have at least 8 characters")
     .matches(/[A-Z]/).withMessage("Password must contain at least one uppercase letter")
@@ -32,7 +32,7 @@ export const validateUser = [
   body("confirmPassword")
     .notEmpty().withMessage("Password confirmation is required")
     .custom((value, { req }) => {
-      if (value !== req.body.pass) {
+      if (value !== req.body.password) {
         throw new Error("Passwords do not match");
       }
       return true;

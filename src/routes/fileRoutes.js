@@ -3,9 +3,9 @@ import * as fileController from "../controllers/fileController.js";
 import {upload} from '../config/multer.js';
 const router = Router();
 
-router.post('/file/upload', upload.single('file'), fileController.uploadFile);
-router.get('/file/:id/download', fileController.downloadFile);
-router.post('/file/:id/edit', fileController.editFile);
-router.post('/file/:id/delete', fileController.deleteFile);
+router.post('/files/upload', upload.single('file'), fileController.uploadFile);
+router.get('/files/:id/download', fileController.downloadFile);
+router.post('/files/:id/edit', fileController.editFile);
+router.post('/files/:id/delete', fileController.deleteFile);
 
-export default router; 
+export default router;  
