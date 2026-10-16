@@ -1,18 +1,27 @@
-:root{
-    --bg: #f8f7f2;
-    --light: #ece9e1;
-    --dark: #aca6a1;
-    --darker: #5b402f;
-    --text: #322924;
+@import url('./navbar.css');
+@import url('./base.css');
+@import url('./forms.css');
+@import url('./folder.css');
 
-    --color1: #dbd3c4;
-    --color2: #dbd3e0;
-    --color3: #a9cdcd;
-    --color4: #adb3d6;
+:root {
+ 
+  --bg: #dfe6ee;             
+  --card: #ffffff;           
 
-    --danger: #8b0000;
-    --danger-lighter: #f8d7da;
-    --danger-light: #e5a5ab;
+  --accent: #4f46e5;         
+  --accent-hover: #4338ca;   
+  --accent-light: #e0e7ff;   
+
+  --text: #0f172a;       
+  --muted: #64748b;         
+  --text-inverse: #ffffff;   
+
+  --border: #e2e8f0;        
+  --border-focus: #818cf8;   
+
+  --danger: #ef4444;        
+  --danger-light: #fee2e2;  
+  --success: #10b981;       
 }
 
 * {

@@ -3,6 +3,7 @@ import rateLimit from'express-rate-limit';
 export const loginLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutos
   max: 5, // Bloquea después de 5 intentos fallidos
+  skipSuccessfulRequests: true,
   standardHeaders: true,
   legacyHeaders: false,
   handler: (req, res) => {

@@ -7,26 +7,30 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body> 
+
+<main class="container">
 <%- include('../partials/header') %>
-<main class="container auth-form">
-    <h1>Login</h1>
-    <% if (error) { %>
-        <p class="error"><%= error %></p>
-    <% } %>
+    <div class="auth-form card">
+        <h1>Login</h1>
+        <% if (error) { %>
+            <p class="alert"><%= error %></p>
+        <% } %>
 
-    <form action="/auth/login" method="POST" class="forms">
-        <div class="label-control">
-            <label>Email</label>
-            <input id="email" type="email" name="email" required>
-        </div>
+        <form action="/auth/login" method="POST" class="forms">
+            <div class="label-control"> 
+                <label>Email</label>
+                <input id="email" type="email" name="email" required>
+            </div>
 
-        <div class="label-control">
-            <label>Password</label>
-            <input id="password" type="password" name="password" required>
-        </div>
+            <div class="label-control">
+                <label>Password</label>
+                <input id="password" type="password" name="password" required>
+            </div>
 
-        <button type="submit">Login</button>
-    </form>
+            <button type="submit">Login</button>
+        </form>
+
+    </div>
 
 </main>  
 </body>

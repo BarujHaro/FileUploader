@@ -7,6 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const uploadFile = async (req, res) => {
+    console.log(req);
+    console.log(res);
     try{
         if(!req.file){
             return res.status(400).send("Not file upload");
@@ -14,6 +16,7 @@ export const uploadFile = async (req, res) => {
  
         const {folderId} = req.body;
         const userId = req.user.id;
+        console.log(folderId+" "+userId+" "+req.file.originalname);
 
         // Parsear el ID de la carpeta
         const targetFolderId = folderId && !isNaN(parseInt(folderId)) ? parseInt(folderId) : null;
@@ -21,7 +24,7 @@ export const uploadFile = async (req, res) => {
         await prisma.file.create({
             data: {
                 name: req.file.originalname,
-                url: `/uploads/${req.file.filename}`,
+                url: `/upload/${req.file.filename}`,
                 size: req.file.size,
                 mimeType: req.file.mimetype,
                 userId: userId,
@@ -55,7 +58,7 @@ export const downloadFile = async (req, res) => {
         }
 
         // 2. Limpiar file.url para evitar duplicar diagonales o carpetas
-        // Si file.url es "/uploads/archivo.png", le quitamos la diagonal inicial
+        // Si file.url es "/upload/archivo.png", le quitamos la diagonal inicial
         const cleanUrl = file.url.startsWith('/') ? file.url.slice(1) : file.url;
 
         // 3. Construir ruta absoluta al archivo dentro de public/

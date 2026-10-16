@@ -24,19 +24,18 @@ export const loginPost = (req, res, next) => {
     try{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.render("auth/login", {
+            return res.status(400).render("auth/login", {
                 title: "Login",
                 error: errors.array()[0].msg 
             });
         }
 
-        
         passport.authenticate("local", (err, user, info) => {
             if (err) return next(err);
 
     
             if (!user) {
-                return res.render("auth/login", {
+                return res.status(401).render("auth/login", {
                     title: "Login",
                     error: info?.message || "Invalid email or password"
                 });

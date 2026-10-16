@@ -8,10 +8,11 @@
 </head>
 <body>
 
-<%- include('header') %>
 
+ 
 <main class="container">
-  <div class="error-container">
+  <%- include('header') %>
+  <div class="alert err-card">
     <h1><%= status || 404 %></h1>
     <p><%= message || 'Page not found' %></p>
 

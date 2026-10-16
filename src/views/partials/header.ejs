@@ -1,17 +1,20 @@
 <header class="header">
   <nav class="nav">
-    <a href="/" class="nav-links">File Uploader</a>
-
-    <% if (user) { %>
-
-      <a href="/folder/folders" class="nav-links ">Your folders</a>
-      <a href="/auth/logout" class="nav-links btn-signup">Logout</a>
-
-    <% } else { %>
-
-      <a href="/auth/login" class="nav-links btn-login">Login</a>
-      <a href="/auth/sign-up" class="nav-links btn-signup">Sign-up</a>
-
-    <% } %>
+    <div class="nav-left">
+      <a href="/" class="nav-links nav-brand">File Uploader</a>
+    </div>
+    <div class="nav-center">
+      <% if (user) { %>
+        <a href="/folder/folders" class="nav-links">Your folders</a>
+      <% } %>
+    </div>
+    <div class="nav-right">
+      <% if (user) { %>
+        <a href="/auth/logout" class="nav-links">Logout</a>
+      <% } else { %>
+        <a href="/auth/login" class="nav-links">Login</a>
+        <a href="/auth/sign-up" class="nav-links">Sign-up</a>
+      <% } %>
+    </div>
   </nav>
 </header>

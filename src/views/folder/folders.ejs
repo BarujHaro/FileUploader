@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
-    <%- include('../partials/header') %>
+    
     <main class="container dashboard">
-        <header class="dashboard-header">
+        <%- include('../partials/header') %>
+        <div class="dashboard-header">
             <div class="breadcrumb">
                 <h2>
                     <a href="/folder/folders">Root</a>
@@ -19,10 +20,18 @@
                 </h2>
             </div>
             <div class="actions">
-                <button class="btn btn-primary" onclick="openModal('folderModal')">New folder</button>
-                <button class="btn btn-secondary" onclick="openModal('uploadModal')">Upload file</button>
+                <button class="icons" onclick="openModal('folderModal')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="55" height="55" fill="currentColor">
+                        <!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.-->
+                        <path d="M576 448C576 483.3 547.3 512 512 512L128 512C92.7 512 64 483.3 64 448L64 160C64 124.7 92.7 96 128 96L266.7 96C280.5 96 294 100.5 305.1 108.8L343.5 137.6C349 141.8 355.8 144 362.7 144L512 144C547.3 144 576 172.7 576 208L576 448zM320 224C306.7 224 296 234.7 296 248L296 296L248 296C234.7 296 224 306.7 224 320C224 333.3 234.7 344 248 344L296 344L296 392C296 405.3 306.7 416 320 416C333.3 416 344 405.3 344 392L344 344L392 344C405.3 344 416 333.3 416 320C416 306.7 405.3 296 392 296L344 296L344 248C344 234.7 333.3 224 320 224z"/>
+                    </svg>
+                </button>
+                <button class="icons" onclick="openModal('uploadModal')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"  width="55" height="55" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM337 327C327.6 317.6 312.4 317.6 303.1 327L239.1 391C229.7 400.4 229.7 415.6 239.1 424.9C248.5 434.2 263.7 434.3 273 424.9L296 401.9L296 488C296 501.3 306.7 512 320 512C333.3 512 344 501.3 344 488L344 401.9L367 424.9C376.4 434.3 391.6 434.3 400.9 424.9C410.2 415.5 410.3 400.3 400.9 391L336.9 327z"/></svg>
+                </button>
+ 
             </div>
-        </header>
+        </div>
 
         <!--Folders section-->
         <section class="content-section">
@@ -31,17 +40,24 @@
                 <% if (Boolean(folders) && folders.length > 0) { %>
                     <% folders.forEach(folder => { %>
                         <div class="card folder-card">
+                            
                             <a href="/folder/folders/<%= folder.id %>" class="folder-link">
-                                <span class="icon">📁</span>
+                                <svg class="folder-icon"  xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"  width="70" height="70" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M128 512L512 512C547.3 512 576 483.3 576 448L576 208C576 172.7 547.3 144 512 144L362.7 144C355.8 144 349 141.8 343.5 137.6L305.1 108.8C294 100.5 280.5 96 266.7 96L128 96C92.7 96 64 124.7 64 160L64 448C64 483.3 92.7 512 128 512z"/></svg>
                                 <span class="name"><%= folder.name %></span>
-                                
+                            </a>
+
                             <div class="card-actions">
-                                <!-- Botón Editar -->
-                                <button type="button" class="btn-icon" title="Edit" onclick="openEditModal('/folder/folders/<%= folder.id %>/edit', '<%= folder.name %>')">✏️</button>
+                                <!-- Botón Editar  <button type="button" class="btn-icon" title="Edit" onclick="openEditModal(event, '/folder/folders/<%= folder.id %>/edit', '<%= folder.name %>')">✏️</button> -->
+                                <button class="icons" onclick="openEditModal(event, '/folder/folders/<%= folder.id %>/edit', '<%= folder.name %>')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="35" height="35" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M100.4 417.2C104.5 402.6 112.2 389.3 123 378.5L304.2 197.3L338.1 163.4C354.7 180 389.4 214.7 442.1 267.4L476 301.3L442.1 335.2L260.9 516.4C250.2 527.1 236.8 534.9 222.2 539L94.4 574.6C86.1 576.9 77.1 574.6 71 568.4C64.9 562.2 62.6 553.3 64.9 545L100.4 417.2zM156 413.5C151.6 418.2 148.4 423.9 146.7 430.1L122.6 517L209.5 492.9C215.9 491.1 221.7 487.8 226.5 483.2L155.9 413.5zM510 267.4C493.4 250.8 458.7 216.1 406 163.4L372 129.5C398.5 103 413.4 88.1 416.9 84.6C430.4 71 448.8 63.4 468 63.4C487.2 63.4 505.6 71 519.1 84.6L554.8 120.3C568.4 133.9 576 152.3 576 171.4C576 190.5 568.4 209 554.8 222.5C551.3 226 536.4 240.9 509.9 267.4z"/></svg>
+                                
+                                </button>
                                 
                                 <!-- Formulario Eliminar -->
                                 <form action="/folder/folders/<%= folder.id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this folder?');">
-                                    <button type="submit" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                                    <button type="submit" class="icons">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"  width="35" height="35" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"/></svg>
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -59,22 +75,30 @@
                 <% if (Boolean(files) && files.length > 0) { %>
                     <% files.forEach(file => { %>
                         <div class="card file-card">
-                            <div class="file-icon">📄</div>
-                            <div class="file-info">
-                                <span class="name" title="<%= file.name %>"<%= file.name %></span>
+                            
+                            <div class="file-link">
+                                <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="70" height="70" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M192 64C156.7 64 128 92.7 128 128L128 512C128 547.3 156.7 576 192 576L448 576C483.3 576 512 547.3 512 512L512 234.5C512 217.5 505.3 201.2 493.3 189.2L386.7 82.7C374.7 70.7 358.5 64 341.5 64L192 64zM453.5 240L360 240C346.7 240 336 229.3 336 216L336 122.5L453.5 240z"/></svg>
+                                <span class="name" title="<%= file.name %>"><%= file.name %></span>
                                 <small class="size"><%= (file.size / 1024).toFixed(1) %> KB</small>
                             </div>
-                            </div>
+                            
                             <div class="file-actions">
                                 <!-- 1. DESCARGAR: Enlace directo a la ruta de descarga -->
-                                <a href="/file/files/<%= file.id %>/download" class="btn-icon" title="Download" download>⬇</a>
+                                <a href="/file/files/<%= file.id %>/download"  class="icons" title="Download" download>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"  width="35" height="35" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM303 505C312.4 514.4 327.6 514.4 336.9 505L400.9 441C410.3 431.6 410.3 416.4 400.9 407.1C391.5 397.8 376.3 397.7 367 407.1L344 430.1L344 344C344 330.7 333.3 320 320 320C306.7 320 296 330.7 296 344L296 430.1L273 407.1C263.6 397.7 248.4 397.7 239.1 407.1C229.8 416.5 229.7 431.7 239.1 441L303.1 505z"/></svg>
+                                </a>
+                                
 
                                 <!-- 2. EDITAR: Abre el modal y pasa la URL y nombre actual -->
-                                <button type="button" class="btn-icon" title="Edit" onclick="openEditModal('/file/files/<%= file.id %>/edit', '<%= file.name %>')">✏️</button>
+                                <button type="button"  class="icons" title="Edit" onclick="openEditModal('/file/files/<%= file.id %>/edit', '<%= file.name %>')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="35" height="35" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M100.4 417.2C104.5 402.6 112.2 389.3 123 378.5L304.2 197.3L338.1 163.4C354.7 180 389.4 214.7 442.1 267.4L476 301.3L442.1 335.2L260.9 516.4C250.2 527.1 236.8 534.9 222.2 539L94.4 574.6C86.1 576.9 77.1 574.6 71 568.4C64.9 562.2 62.6 553.3 64.9 545L100.4 417.2zM156 413.5C151.6 418.2 148.4 423.9 146.7 430.1L122.6 517L209.5 492.9C215.9 491.1 221.7 487.8 226.5 483.2L155.9 413.5zM510 267.4C493.4 250.8 458.7 216.1 406 163.4L372 129.5C398.5 103 413.4 88.1 416.9 84.6C430.4 71 448.8 63.4 468 63.4C487.2 63.4 505.6 71 519.1 84.6L554.8 120.3C568.4 133.9 576 152.3 576 171.4C576 190.5 568.4 209 554.8 222.5C551.3 226 536.4 240.9 509.9 267.4z"/></svg>
+                                </button>
 
                                 <!-- 3. ELIMINAR: Formulario POST con confirmación -->
                                 <form action="/file/files/<%= file.id %>/delete" method="POST" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete this file?');">
-                                    <button type="submit" class="btn-icon btn-delete" title="Delete">🗑️</button>
+                                    <button type="submit"  class="icons" title="Delete">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"  width="35" height="35" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"/></svg>
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -95,13 +119,13 @@
             <form action="/folder/folders" method="POST">
                 <input type="hidden" name="parentId" value="<%= typeof currentFolder !== 'undefined' && currentFolder ? currentFolder.id : '' %>">
 
-                <div class="form-group">
+                <div class="label-control">
                     <label for="folderName">Name of the Folder</label>
                     <input type="text" id="folderName" name="name" required placeholder="Ej. Doc, photo...">      
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-cancel" onclick="closeModal('folderModal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('folderModal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Create</button>
                 </div>
             </form>
@@ -125,7 +149,7 @@
                                 <% if (typeof allFolders !== 'undefined' && allFolders) { %>
                                     <% allFolders.forEach(folder => { %>
                                         <option value="<%= folder.id %>" <%= (typeof currentFolder !== 'undefined' && currentFolder && currentFolder.id === folder.id) ? 'selected' : '' %>>
-                                            📁 <%= folder.name %>
+                                            <%= folder.name %>
                                         </option>
                                     <% }) %>
                                 <% } %>
@@ -139,7 +163,7 @@
 
                 <!--Select file-->
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-cancel" onclick="closeModal('uploadModal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('uploadModal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Upload</button>
                 </div>
             </form>
@@ -151,12 +175,12 @@
         <div class="modal-content">
             <h3>Edit</h3>
             <form id="editForm" method="POST">
-                <div class="form-group">
+                <div class="label-control">
                     <label for="editName">New name:</label>
                     <input type="text" id="editName" name="name" required>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editModal')">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
@@ -171,20 +195,22 @@
         function closeModal(modalId){
             document.getElementById(modalId).classList.remove('active');
         }
-        function openEditModal(actionUrl, currentName) {
+        function openEditModal(event, actionUrl, currentName) {
+            if(event) event.stopPropagation();
+
             const form = document.getElementById('editForm');
             const input = document.getElementById('editName');
             
-            form.action = actionUrl; // Configura la ruta según sea carpeta o archivo
+            form.action = actionUrl;  
             input.value = currentName;
             
             document.getElementById('editModal').classList.add('active');
         }
-        window.onclick=function(event){
-            if(event.targetr.classList.contains('modal-overlay')){
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
                 event.target.classList.remove('active');
             }
-        }
+        };
     </script>
 </body>
 </html>
