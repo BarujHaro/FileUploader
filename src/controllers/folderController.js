@@ -4,14 +4,37 @@ export const getFolders = async (req, res) => {
     try{
         const userId = req.user.id;
 
+        const foldersPage = parseInt(req.query.p_folders) || 1;
+        const foldersLimit = 8;
+        const foldersSkip = (foldersPage-1) * foldersLimit;
+
+        const totalFolders = await prisma.folder.count({
+            where: {userId: userId, parentId: null}
+        });
+        const foldersTotalPages = Math.ceil(totalFolders / foldersLimit);
+
         const userFolders = await prisma.folder.findMany({
             where: {userId: userId, parentId: null},
-            orderBy: {name: 'asc'}
+            orderBy: {name: 'asc'},
+            take: foldersLimit,
+            skip: foldersSkip
         });
+
+
+        const filesPage = parseInt(req.query.p_files) || 1;
+        const filesLimit = 8;
+        const filesSkip = (filesPage-1)*filesLimit;
+        const totalFilesCount = await prisma.file.count({
+            where: { folderId: null, userId: userId }
+        });
+        const filesTotalPages = Math.ceil(totalFilesCount / filesLimit);
+
 
         const userFiles = await prisma.file.findMany({
             where: { userId: userId, folderId: null },
-            orderBy: { createdAt: 'desc' }
+            orderBy: { createdAt: 'desc' },
+            take: filesLimit,
+            skip: filesSkip
         });
      
         const allUserFolders = await prisma.folder.findMany({
@@ -21,25 +44,33 @@ export const getFolders = async (req, res) => {
 
         res.render("folder/folders", {
             title: "My Files",
-            folders: userFolders,         // Lista de carpetas a mostrar
-            files: userFiles,             // Lista de archivos a mostrar
-            allFolders: allUserFolders,   // Opcional: Para llenar el <select> del modal de subida
+            folders: userFolders,          
+            files: userFiles,              
+            allFolders: allUserFolders,    
             currentFolder: null,
-            error: null
+            error: null,
+            foldersPage: foldersPage,  
+            foldersTotalPages: foldersTotalPages,
+            filesPage: filesPage,
+            filesTotalPages: filesTotalPages,
         });
 
     }catch(error){
         console.error("Error in getFolders:", error);
         res.status(500).render("folder/folders", {
             title: "My Files",
-            folders: [],         // Lista de carpetas a mostrar
-            files: [],             // Lista de archivos a mostrar
-            allFolders: [],   // Opcional: Para llenar el <select> del modal de subida
+            folders: [],        
+            files: [],             
+            allFolders: [],   
             currentFolder: null,
-            error: "Error getting the files"
+            error: "Error getting the files",
+            foldersPage: 1,  
+            foldersTotalPages: 1,
+            filesPage: 1,
+            filesTotalPages: 1,
         });
     }
-
+ 
 };
 
 export const postFolders = async (req, res) => {
@@ -87,10 +118,32 @@ export const getFolderContent = async (req, res) => {
             return res.status(404).send('Folder not found');
         }
 
+        //Pagination
+        const foldersPage = parseInt(req.query.p_folders) || 1;
+        const foldersLimit = 8;
+        const foldersSkip = (foldersPage - 1) * foldersLimit;
+
+        const totalFoldersCount = await prisma.folder.count({
+            where: { parentId: folderId, userId: userId }
+        });
+        const foldersTotalPages = Math.ceil(totalFoldersCount / foldersLimit);
+
         const folders = await prisma.folder.findMany({
             where: { parentId: folderId, userId: userId },
-            orderBy: { name: 'asc' }
+            orderBy: { name: 'asc' },
+            take: foldersLimit,
+            skip: foldersSkip
+
         });
+
+        const filesPage = parseInt(req.query.p_files) || 1;
+        const filesLimit = 8;
+        const filesSkip = (filesPage - 1) * filesLimit;
+
+        const totalFilesCount = await prisma.file.count({
+            where: { folderId: folderId, userId: userId }
+        });
+        const filesTotalPages = Math.ceil(totalFilesCount / filesLimit);
 
         const files = await prisma.file.findMany({
             where: { folderId: folderId, userId: userId },
@@ -99,7 +152,9 @@ export const getFolderContent = async (req, res) => {
 
         const allFolders = await prisma.folder.findMany({
             where: { userId: userId },
-            orderBy: { name: 'asc' }
+            orderBy: { name: 'asc' },
+            take: filesLimit,
+            skip: filesSkip
         });
 
         res.render('folder/folders', {
@@ -107,7 +162,11 @@ export const getFolderContent = async (req, res) => {
             currentFolder,
             folders,
             files,
-            allFolders
+            allFolders,
+            foldersPage,
+            foldersTotalPages,
+            filesPage,
+            filesTotalPages
         });
 
     } catch (error) {
