@@ -9,11 +9,18 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default session({
-  secret: process.env.SESSION_SECRET,       // A secret phrase to sign the cookie session
-  resave: false,                            // It doesnt save the session until new changes
-  saveUninitialized: false,                 // It doesnt create a session until the user is logged
-                                            // It says to Express to save the sessions in the DB using Prisma
+  secret: process.env.SESSION_SECRET,        
+  resave: false,                             
+  saveUninitialized: false,                  
+  
+  // 1 H 
+  cookie: {
+    maxAge: 60 * 60 * 1000,                 // La sesión expira en 1 hora exacta
+    httpOnly: true,                         // Protege la cookie contra ataques XSS
+    secure: process.env.NODE_ENV === 'production'  
+  },
+
   store: new PrismaSessionStore(prisma, {
-    checkPeriod: 5 * 60 * 1000,             // It cleans the expired sessions each 5 minutes       
+    checkPeriod: 5 * 60 * 1000,             
   }),
-}); 
+});

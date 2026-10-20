@@ -9,4 +9,7 @@ router.get('/folders/:id', isAuth, folderController.getFolderContent);
 router.post('/folders/:id/edit', isAuth, folderController.editFolder);
 router.post('/folders/:id/delete', isAuth, folderController.deleteFolder);
 
+router.post('/share/:folderId', isAuth, folderController.generateShareLink);
+router.get('/share/:token', folderController.viewSharedFolder);
+
 export default router; 

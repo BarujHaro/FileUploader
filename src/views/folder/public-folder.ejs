@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Shared folder: <%= folder.name %></title>
+    <link rel="stylesheet" href="/css/styles.css"> 
+</head>
+<body>
+    <main class="container">
+       
+        <section class="content-section">
+            <h2>Folder: <%= folder.name %></h2>
+            <p class="subtitle">Temporal shared folder</p>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid var(--border-color, #ccc);">
+        </section>
+ 
+        <section class="content-section">
+            <h3>Files</h3>
+            <div class="grid-container">
+                <% if (Boolean(folder.files) && folder.files.length > 0) { %>
+                    <% folder.files.forEach(file => { %>
+                        <div class="card file-card">
+                            
+                            <!-- Al hacer clic, abre el modal pasando la URL directa del archivo (o su ruta de lectura/preview) y su nombre -->
+                            <div class="file-link" onclick="openPreviewModal('<%= file.url %>', '<%= file.name %>')">
+                                <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="70" height="70" fill="currentColor">
+                                    <path d="M192 64C156.7 64 128 92.7 128 128L128 512C128 547.3 156.7 576 192 576L448 576C483.3 576 512 547.3 512 512L512 234.5C512 217.5 505.3 201.2 493.3 189.2L386.7 82.7C374.7 70.7 358.5 64 341.5 64L192 64zM453.5 240L360 240C346.7 240 336 229.3 336 216L336 122.5L453.5 240z"/>
+                                </svg>
+                                <span class="name" title="<%= file.name %>"><%= file.name %></span>
+                            </div>
+                            
+                            <div class="file-actions">
+                                <a href="<%= file.url %>" class="icons" title="Download" download>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="35" height="35" fill="currentColor">
+                                        <path d="M128 128C128 92.7 156.7 64 192 64L341.5 64C358.5 64 374.8 70.7 386.8 82.7L493.3 189.3C505.3 201.3 512 217.6 512 234.6L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM336 122.5L336 216C336 229.3 346.7 240 360 240L453.5 240L336 122.5zM303 505C312.4 514.4 327.6 514.4 336.9 505L400.9 441C410.3 431.6 410.3 416.4 400.9 407.1C391.5 397.8 376.3 397.7 367 407.1L344 430.1L344 344C344 330.7 333.3 320 320 320C306.7 320 296 330.7 296 344L296 430.1L273 407.1C263.6 397.7 248.4 397.7 239.1 407.1C229.8 416.5 229.7 431.7 239.1 441L303.1 505z"/>
+                                    </svg>
+                                </a>
+                            </div>
+
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="empty-msg">Folder empty.</p>
+                <% } %>
+            </div>
+        </section>
+    </main>
+
+<!-- Modal 4: To preview file-->
+    <div id="previewModal" class="modal-overlay">
+        <div class="modal-content preview-content">
+            <div class="preview-header">
+                <h3 id="previewTitle">Preview</h3>
+                <button type="button" class="icons cross-icon" onclick="closeModal('previewModal')">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="35" height="35" fill="currentColor"><!--!Font Awesome Free v7.3.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2026 Fonticons, Inc.--><path d="M504.6 148.5C515.9 134.9 514.1 114.7 500.5 103.4C486.9 92.1 466.7 93.9 455.4 107.5L320 270L184.6 107.5C173.3 93.9 153.1 92.1 139.5 103.4C125.9 114.7 124.1 134.9 135.4 148.5L278.3 320L135.4 491.5C124.1 505.1 125.9 525.3 139.5 536.6C153.1 547.9 173.3 546.1 184.6 532.5L320 370L455.4 532.5C466.7 546.1 486.9 547.9 500.5 536.6C514.1 525.3 515.9 505.1 504.6 491.5L361.7 320L504.6 148.5z"/></svg>
+                </button>
+
+            </div>
+            <div id="previewBody" class="preview-body">
+            <!-- El contenido dinámico (img, iframe, etc.) se inyectará aquí con JS -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- 2. Script con las funciones de apertura/cierre -->
+    <script>
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function openPreviewModal(previewUrl, fileName) {
+            const titleEl = document.getElementById('previewTitle');
+            const bodyEl = document.getElementById('previewBody');
+            
+            titleEl.textContent = fileName;
+            bodyEl.innerHTML = '<p class="loading-msg">Loading preview...</p>';
+            
+            const ext = fileName.split('.').pop().toLowerCase();
+
+            // 1. Imágenes
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(ext)) {
+                bodyEl.innerHTML = `<img src="${previewUrl}" alt="${fileName}" class="preview-media-img" />`;
+            } 
+            // 2. PDFs
+            else if (ext === 'pdf') {
+                bodyEl.innerHTML = `<iframe src="${previewUrl}" class="preview-media-frame"></iframe>`;
+            } 
+            // 3. Audio / Video
+            else if (['mp4', 'webm'].includes(ext)) {
+                bodyEl.innerHTML = `<video controls class="preview-media-video"><source src="${previewUrl}"></video>`;
+            }
+            else if (['mp3', 'wav', 'ogg'].includes(ext)) {
+                bodyEl.innerHTML = `<audio controls><source src="${previewUrl}"></audio>`;
+            }
+            // 4. Archivos no soportados
+            else {
+                bodyEl.innerHTML = `
+                    <div class="unsupported-preview">
+                        <p>No hay vista previa disponible para este tipo de archivo.</p>
+                        <a href="${previewUrl}" class="btn btn-primary" download>Descargar archivo</a>
+                    </div>
+                `;
+            }
+
+            document.getElementById('previewModal').classList.add('active');
+        }
+
+        // Cerrar modal al hacer clic fuera del contenido
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+            }
+        };
+    </script>
+</body>
+</html>

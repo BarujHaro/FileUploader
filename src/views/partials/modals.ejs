@@ -57,7 +57,7 @@
         </div>
     </div>
 
-    <!-- Modal to edit -->
+    <!-- Modal 3: To edit folder/file -->
     <div id="editModal" class="modal-overlay">
         <div class="modal-content">
             <h3>Edit</h3>
@@ -74,7 +74,7 @@
         </div>
     </div>
 
-<!-- Modal to preview -->
+<!-- Modal 4: To preview file-->
     <div id="previewModal" class="modal-overlay">
         <div class="modal-content preview-content">
             <div class="preview-header">
@@ -89,6 +89,49 @@
             </div>
         </div>
     </div>
+
+<!-- Modal 5: To share-->
+    <div id="shareModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Share</h3>
+            <form id="shareForm" action="" method="POST">
+                <div class="form-group">
+                    <label for="durationName">Link Duration:</label>
+                    <select name="duration" id="duration">
+                        <option value="1h">1 Hour</option>
+                        <option value="2h">2 Hour</option>
+                        <option value="3h">3 Hour</option>
+                        <option value="4h">4 Hour</option>
+                        <option value="5h">5 Hour</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('shareModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Generate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<!--6: Modal with Successful sharing -->
+<div id="shareSuccessModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Link generated</h3>
+        <p>Copy the next temporal link:</p>
+        
+        <div class="label-control">
+            <input type="text" id="generatedLinkInput" readonly style="width: 100%; padding: 8px;">
+        </div>
+
+        <div class="modal-actions" style="margin-top: 15px;">
+            <button type="button" class="btn btn-primary" onclick="copyGeneratedLink()">Copy</button>
+            <button type="button" class="btn btn-secondary" onclick="closeModal('shareSuccessModal')">Close</button>
+        </div>
+    </div>
+</div>
+
+
+
 <!-- SCRIPT -->
     <script>
         function openModal(modalId){
@@ -148,6 +191,34 @@
 
             document.getElementById('previewModal').classList.add('active');
         }
+
+        function openShareModal(folderId) {
+                const form = document.getElementById('shareForm');
+                form.action = `/folder/share/${folderId}`;
+                
+                document.getElementById('shareModal').classList.add('active');
+            }
+
+            function copyGeneratedLink() {
+            const input = document.getElementById('generatedLinkInput');
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            alert('¡Link copied!');
+        }
+
+        // Al cargar la página, revisamos si hay un shareLink en la URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const shareLink = urlParams.get('shareLink');
+
+            if (shareLink) {
+                
+                document.getElementById('generatedLinkInput').value = shareLink;
+               
+                document.getElementById('shareSuccessModal').classList.add('active'); 
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
 
         window.onclick = function(event) {
             if (event.target.classList.contains('modal-overlay')) {

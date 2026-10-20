@@ -1,4 +1,5 @@
 import prisma from '../db/db.js';
+import jwt from 'jsonwebtoken';
 
 export const getFolders = async (req, res) => {
     try{
@@ -207,5 +208,55 @@ export const deleteFolder = async (req, res) => {
     } catch (error) {
         console.error('Error Deleting the folder:', error);
         res.status(500).send('Error Deleting the folder');
+    }
+};
+
+export const generateShareLink = async (req, res) => {
+    try{
+        const { folderId } = req.params;
+        const { duration } = req.body;
+
+        const token = jwt.sign(
+            {folderId: folderId},
+            process.env.JWT_SHARE_SECRET,
+            {expiresIn: duration}
+        );
+ 
+
+        const shareLink = `${req.protocol}://${req.get('host')}/folder/share/${token}`;
+        
+        res.redirect(`/folder/folders?shareLink=${encodeURIComponent(shareLink)}`);
+    }catch (error){
+        res.status(500).send("Error generating the link");
+    }
+};
+
+export const viewSharedFolder = async (req, res) => {
+ 
+    
+    try {
+        const {token} = req.params;
+        const decoded = jwt.verify(token, process.env.JWT_SHARE_SECRET);
+        const folderId = decoded.folderId;
+
+        const folder = await prisma.folder.findUnique({
+            where: { id: parseInt(folderId) },  
+            include: { files: true }
+        });
+
+        if (!folder) {
+            return res.status(404).send("Folder doesn't exist");
+        }
+
+        
+        res.render('folder/public-folder', { folder });
+
+
+
+    }catch(error){
+        if(error.name==='TokenExpiredError'){
+            return res.status(410).send("Link expired.");
+        }
+        res.status(400).send("Invalid Link");
     }
 };
