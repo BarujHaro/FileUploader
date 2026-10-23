@@ -1,6 +1,7 @@
 import prisma from '../db/db.js';
 import jwt from 'jsonwebtoken';
 
+/*
 export const getFolders = async (req, res) => {
     try{
         const userId = req.user.id;
@@ -73,6 +74,109 @@ export const getFolders = async (req, res) => {
     }
  
 };
+*/
+
+export const getFolders = async (req, res) => {
+    try{
+        const userId = req.user.id;
+
+        const folderId = req.params.id ? parseInt(req.params.id) : null;
+        let currentFolder = null;
+        let title = "My Files";
+        if(folderId){
+            currentFolder=await prisma.folder.findFirst({
+                where: {id: folderId, userId: userId}
+            });
+            if(!currentFolder){
+                return res.status(404).send('Folder not found');
+            }
+            title = currentFolder.name;
+        }
+
+        const searchQuery = req.query.search ? req.query.search.trim() : '';
+
+        const foldersPage = parseInt(req.query.p_folders) || 1;
+        const foldersLimit = 8;
+        const foldersSkip = (foldersPage-1) * foldersLimit;
+
+        const folderWhere = {
+            userId: userId,
+            parentId: null,
+            ...(searchQuery && {
+                name: {contains: searchQuery, mode: 'insensitive'}
+            })
+        };
+
+        const totalFolders = await prisma.folder.count({ where: folderWhere });
+        const foldersTotalPages = Math.ceil(totalFolders / foldersLimit);
+
+        const userFolders = await prisma.folder.findMany({
+            where: folderWhere,
+            orderBy: {name: 'asc'},
+            take: foldersLimit,
+            skip: foldersSkip
+        });
+
+
+        const filesPage = parseInt(req.query.p_files) || 1;
+        const filesLimit = 8;
+        const filesSkip = (filesPage-1)*filesLimit;
+
+        const fileWhere = {
+            userId: userId,
+            folderId: null,
+            ...(searchQuery && { name: {contains: searchQuery, mode: 'insensitive'}})
+        };
+
+        const totalFilesCount = await prisma.file.count({ where: fileWhere });
+        const filesTotalPages = Math.ceil(totalFilesCount / filesLimit);
+
+
+        const userFiles = await prisma.file.findMany({
+            where: fileWhere,
+            orderBy: { createdAt: 'desc' },
+            take: filesLimit,
+            skip: filesSkip
+        });
+     
+        const allUserFolders = await prisma.folder.findMany({
+            where: {userId: userId},
+            orderBy: {name: 'asc'}
+        });
+
+        res.render("folder/folders", {
+            title: "My Files",
+            folders: userFolders,          
+            files: userFiles,              
+            allFolders: allUserFolders,    
+            currentFolder: null,
+            error: null,
+            foldersPage: foldersPage,  
+            foldersTotalPages: foldersTotalPages,
+            filesPage: filesPage,
+            filesTotalPages: filesTotalPages,
+            searchQuery: searchQuery
+        });
+
+    }catch(error){
+         
+        res.status(500).render("folder/folders", {
+            title: "My Files",
+            folders: [],        
+            files: [],             
+            allFolders: [],   
+            currentFolder: null,
+            error: "Error getting the files",
+            foldersPage: 1,  
+            foldersTotalPages: 1,
+            filesPage: 1,
+            filesTotalPages: 1,
+            searchQuery: ''
+        });
+    }
+ 
+};
+
 
 export const postFolders = async (req, res) => {
     try{
@@ -105,76 +209,6 @@ export const postFolders = async (req, res) => {
 
 };
 
-
-export const getFolderContent = async (req, res) => {
-    try {
-        const folderId = parseInt(req.params.id);
-        const userId = req.user.id;
-
-        const currentFolder = await prisma.folder.findFirst({
-            where: {id: folderId, userId: userId}
-        });
-
-        if(!currentFolder){
-            return res.status(404).send('Folder not found');
-        }
-
-        //Pagination
-        const foldersPage = parseInt(req.query.p_folders) || 1;
-        const foldersLimit = 8;
-        const foldersSkip = (foldersPage - 1) * foldersLimit;
-
-        const totalFoldersCount = await prisma.folder.count({
-            where: { parentId: folderId, userId: userId }
-        });
-        const foldersTotalPages = Math.ceil(totalFoldersCount / foldersLimit);
-
-        const folders = await prisma.folder.findMany({
-            where: { parentId: folderId, userId: userId },
-            orderBy: { name: 'asc' },
-            take: foldersLimit,
-            skip: foldersSkip
-
-        });
-
-        const filesPage = parseInt(req.query.p_files) || 1;
-        const filesLimit = 8;
-        const filesSkip = (filesPage - 1) * filesLimit;
-
-        const totalFilesCount = await prisma.file.count({
-            where: { folderId: folderId, userId: userId }
-        });
-        const filesTotalPages = Math.ceil(totalFilesCount / filesLimit);
-
-        const files = await prisma.file.findMany({
-            where: { folderId: folderId, userId: userId },
-            orderBy: { createdAt: 'desc' }
-        });
-
-        const allFolders = await prisma.folder.findMany({
-            where: { userId: userId },
-            orderBy: { name: 'asc' },
-            take: filesLimit,
-            skip: filesSkip
-        });
-
-        res.render('folder/folders', {
-            title: currentFolder.name,
-            currentFolder,
-            folders,
-            files,
-            allFolders,
-            foldersPage,
-            foldersTotalPages,
-            filesPage,
-            filesTotalPages
-        });
-
-    } catch (error) {
-        console.error('Error loading the file:', error);
-        res.status(500).send('Error loading the file');
-    }
-};
 
 export const editFolder = async (req, res) => {
     try {

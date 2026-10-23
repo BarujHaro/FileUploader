@@ -12,7 +12,8 @@
 .breadcrumb h2 a {
   color: inherit;          
   text-decoration: none;  
-  cursor: pointer;        
+  cursor: pointer;     
+     
 }
 
 .breadcrumb:hover {
@@ -52,13 +53,22 @@
     justify-content: center;
     transition: all 0.25s ease-in-out;  
 
-  filter: drop-shadow(0 5px 7px rgba(15, 23, 42, 0.08));
+  filter: drop-shadow(0 5px 7px rgba(28, 25, 92, 0.08));
   }
 
 .icons:hover {
     color: var(--accent);    
     transform: scale(1.08);   
-    filter: drop-shadow(0 7px 11px rgba(79, 70, 229, 0.35));  
+    filter: drop-shadow(0 7px 11px rgba(28, 25, 92, 0.35));  
+}
+
+.icons.act {
+   
+  filter: drop-shadow(0px 4px 6px rgba(28, 25, 92, 0.2));
+}
+
+.icons.act:hover {
+  filter: drop-shadow(0px 6px 10px rgba(28, 25, 92, 0.45));
 }
 
 .cross-icon{
@@ -69,6 +79,13 @@
 
 .content-section{
   margin: 1rem 0;
+}
+.content-section h3{
+  color: var(--accent-hover);  
+  font-weight: 600;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--accent-hover);  
+  margin-bottom: 1rem;
 }
 
 .grid-container {
@@ -108,6 +125,7 @@
   justify-content: space-between;
   background-color: var(--card, #ffffff);
   border: 1px solid var(--border, #e2e8f0);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 0.75rem;
   padding: 1.25rem 1rem 0.75rem 1rem;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -117,7 +135,7 @@
 
 .folder-card:hover, .file-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
  
@@ -134,7 +152,7 @@
   overflow: hidden;
 }
 
-/* Ícono de Carpeta */
+
 .folder-icon, .file-icon {
   width: 60px;
   height: 60px;
@@ -175,7 +193,40 @@
   border-top: 1px solid var(--border-light, #f1f5f9);
 }
 
- 
+.search-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.search-container input[type="text"]{
+  flex: 1;
+  height: 50%;
+  box-sizing: border-box;
+    /* Sombra añadida: horizontal | vertical | difuminado | color */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+.search-container .btn {
+  white-space: nowrap;  
+  max-width: 40%;
+  height: 50%;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+  border: 2px solid var(--accent-hover);
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+
 @media (min-width: 768px) {
   .grid-container {
     display: grid;
