@@ -55,6 +55,6 @@ cd file-uploader
 ```
 
 ### 2. ⚙️ Environment Setup
-DATABASE_URL 
-SESSION_SECRET 
-JWT_SHARE_SECRET 
+DATABASE_URL="postgresql://user:pass@host:port/db?schema=public"
+SESSION_SECRET="sessionsecretkey"
+JWT_SHARE_SECRET="PutYourJWTKey"
