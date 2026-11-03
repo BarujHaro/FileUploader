@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as fileController from "../controllers/fileController.js";
 import {isAuth} from './middleware/Auth.js';
 import {upload} from '../config/multer.js';
+import 'dotenv/config';
 const router = Router();
 
 router.post('/files/upload', isAuth, upload.single('file'), fileController.uploadFile);

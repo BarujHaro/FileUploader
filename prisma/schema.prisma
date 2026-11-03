@@ -60,6 +60,11 @@ model File {
   mimeType  String
   createdAt DateTime @default(now())
 
+//	local / s3
+  storage String @default("local")
+  storageKey String?
+//uploads/abc123.pdf
+
   // Opcional para permitir archivos en la raíz (folderId = null)
   folder    Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
   folderId  Int?
@@ -68,7 +73,7 @@ model File {
   userId    Int
 }
 
-model Session {
+ model Session {
   id        String   @id
   sid       String   @unique
   data      String

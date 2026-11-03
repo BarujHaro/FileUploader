@@ -12,6 +12,7 @@
 - **Dynamic Preview:** Preview of files directly within the application, no need for immediate downloads
 - **Server side search:** A backend-optimized search bar powered by Prisma, allowing for global filtering of folders and files.
 - **Temporary Sharing Links:** Generate unique, token-protected public links with an automatic expiration date.
+- **S3 storage:** Using a bucket to storage files on the cloud
 
 ---
 
@@ -24,6 +25,7 @@
 - **Authentication:** Passport.js (Local Strategy)
 - **File Handling:** Multer
 - **Styling:** Modern CSS3 (CSS Variables, Flexbox, Grid)
+- **Cloud:** S3
 
 ---
 
@@ -55,6 +57,15 @@ cd file-uploader
 ```
 
 ### 2. ⚙️ Environment Setup
+STORAGE_DRIVER=s3 or local
+
+S3_BUCKET=bucketname
+
+S3_ENDPOINT=URL
+AWS_REGION=region
+AWS_ACCESS_KEY_ID=test
+AWS_SECRET_ACCESS_KEY=test
+
 DATABASE_URL="postgresql://user:pass@host:port/db?schema=public"
 SESSION_SECRET="sessionsecretkey"
 JWT_SHARE_SECRET="PutYourJWTKey"

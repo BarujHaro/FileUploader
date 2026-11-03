@@ -3,6 +3,8 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
+import { saveFile, getFile, removeFile } from '../services/storageService.js';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -14,18 +16,23 @@ export const uploadFile = async (req, res) => {
  
         const {folderId} = req.body;
         const userId = req.user.id;
-        console.log(folderId+" "+userId+" "+req.file.originalname);
-
+         
         // Parsear el ID de la carpeta
         const targetFolderId = folderId && !isNaN(parseInt(folderId)) ? parseInt(folderId) : null;
 
+        // Guardar archivo en local o S3
+        const savedFile = await saveFile(req.file);
+
+        // Guardar metadatos en Prisma
         await prisma.file.create({
             data: {
                 name: req.file.originalname,
-                url: `/upload/${req.file.filename}`,
+                url: savedFile.url,
+                storage: savedFile.storage,
+                storageKey: savedFile.storageKey,
                 size: req.file.size,
                 mimeType: req.file.mimetype,
-                userId: userId,
+                userId,
                 folderId: targetFolderId
             }
         });
@@ -45,32 +52,31 @@ export const downloadFile = async (req, res) => {
     try {
         const fileId = parseInt(req.params.id);
         const userId = req.user.id;
-
+ 
         const file = await prisma.file.findFirst({
             where: { id: fileId, userId: userId }
         });
 
         if (!file) {
-            return res.status(404).send('File record not found in database');
+            return res.status(404).send('File not found');
         }
 
-        const cleanUrl = file.url.startsWith('/') ? file.url.slice(1) : file.url;
+                const storageKey =
+            file.storageKey || path.basename(file.url);
 
-        const filePath = path.resolve(__dirname, '../../public', cleanUrl);
+        const buffer = await getFile(
+            file.storage || 'local',
+            file.storageKey || path.basename(file.url)
+        );
 
-        console.log("Intentando descargar desde:", filePath); // Log para depurar
+                res.setHeader('Content-Type', 'application/octet-stream');
 
-        if (!fs.existsSync(filePath)) {
-            console.error("El archivo físico no existe en la ruta:", filePath);
-            return res.status(404).send('Physical file not found on server');
-        }
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename*=UTF-8''${encodeURIComponent(file.name)}`
+        );
 
-        res.download(filePath, file.name, (err) => {
-            if (err && !res.headersSent) {
-                console.error('Error al enviar el archivo:', err);
-                res.status(500).send('Could not download file');
-            }
-        });
+        res.send(buffer);
 
     } catch (error) {
         console.error('Error downloading file:', error);
@@ -119,21 +125,27 @@ export const deleteFile = async (req, res) => {
             where: { id: fileId, userId: userId }
         });
 
-        if (file) {
+        if (!file) {
+            return res.status(404).send('File not found');
+        }
 
-            const targetFolderId = file.folderId;
-            // 1. Delete on the disk
-            const filePath = path.join(__dirname, '../../public', file.url);
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
- 
-            // 2. Delete on teh DB
-            await prisma.file.delete({ where: { id: fileId } });
+        const targetFolderId = file.folderId;
+
         
-            if (targetFolderId) {
-                return res.redirect(`/folder/folders/${targetFolderId}`);
-            }
+
+        // Eliminar archivo de su almacenamiento
+        await removeFile(
+            file.storage || 'local',
+            file.storageKey || path.basename(file.url)
+        );
+
+        // Eliminar registro de Prisma
+        await prisma.file.delete({
+            where: { id: fileId }
+        });
+
+        if (targetFolderId) {
+            return res.redirect(`/folder/folders/${targetFolderId}`);
         }
 
         res.redirect('/folder/folders');
@@ -142,6 +154,7 @@ export const deleteFile = async (req, res) => {
         res.status(500).send('Error Deleting the File');
     }
 };
+
 
 export const previewFile = async (req, res) => {
     try{
@@ -159,12 +172,15 @@ export const previewFile = async (req, res) => {
             return res.status(404).send('File not found');
         }
 
-        const relativePath = file.url.startsWith('/') ? file.url.slice(1) : file.url;
+        const buffer = await getFile(
+            file.storage || 'local',
+            file.storageKey || path.basename(file.url)
+        );
 
-        const filePath = path.join(__dirname, '../../public', relativePath);
+        res.setHeader('Content-Type', file.mimeType);
+        res.setHeader('Content-Disposition', 'inline');
 
-     
-        res.sendFile(filePath);
+        res.send(buffer);
 
     }catch(error){
         console.error(error);

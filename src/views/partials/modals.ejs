@@ -25,9 +25,7 @@
             <h3>Upload Files</h3>
             <form action="/file/files/upload" method="POST" enctype="multipart/form-data">
                 
-                <!-- Guardar dentro de la carpeta actual si estamos dentro de una -->
-                <input type="hidden" name="folderId" value="<%= typeof currentFolder !== 'undefined' && currentFolder ? currentFolder.id : '' %>">
-
+                 
                 <!--Select folder-->
                     <div class="form-group">
                         <label for="folderSelect">Destination folder:</label>

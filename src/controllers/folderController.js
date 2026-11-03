@@ -1,6 +1,6 @@
 import prisma from '../db/db.js';
 import jwt from 'jsonwebtoken';
-
+ 
 /*
 export const getFolders = async (req, res) => {
     try{
@@ -101,7 +101,7 @@ export const getFolders = async (req, res) => {
 
         const folderWhere = {
             userId: userId,
-            parentId: null,
+            parentId: folderId,
             ...(searchQuery && {
                 name: {contains: searchQuery, mode: 'insensitive'}
             })
@@ -124,7 +124,7 @@ export const getFolders = async (req, res) => {
 
         const fileWhere = {
             userId: userId,
-            folderId: null,
+            folderId: folderId,
             ...(searchQuery && { name: {contains: searchQuery, mode: 'insensitive'}})
         };
 
